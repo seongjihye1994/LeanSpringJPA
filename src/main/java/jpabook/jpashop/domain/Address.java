@@ -15,7 +15,7 @@ import javax.persistence.Embeddable;
  * JPA가 이런 제약을 두는 이유는 JPA 구현 라이브러리가
  * 객체를 생성할 때 리플랙션 같은 기술을 사용할 수 있도록 지원해야 하기 때문이다.
  */
-@Embeddable // 임베디드 타입
+@Embeddable // 임베디드 타입 (JPA 내장타입, DB에는 테이블이 생성되지 않는다.)
 @Getter
 public class Address {
 

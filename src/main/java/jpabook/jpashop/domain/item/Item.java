@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // DB 에서도 상속 관계 설정(default: 단일 테이블 전략)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // DB 에서도 상속 관계 설정(default: 단일 테이블 전략 -> 하나의 테이블에 모든 필드 넣음)
 @DiscriminatorColumn(name = "dtype") // 부모 클래스에 선언 (하위 클래스를 구분하는 용도)
 @Getter
 @Setter

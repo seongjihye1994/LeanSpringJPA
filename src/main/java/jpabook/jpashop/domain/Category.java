@@ -33,13 +33,15 @@ public class Category {
      *
      */
     @ManyToMany
-    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
+    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "item_id")) // category 와 items 는 다대다, -> 중간 매핑 테이블이 필요
     private List<Item> items = new ArrayList<>();
 
+    // 셀프 양방향 연관관계 지정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    // 셀프 양방향 연관관계 지정
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>();
 

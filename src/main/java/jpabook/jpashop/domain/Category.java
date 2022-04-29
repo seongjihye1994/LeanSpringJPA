@@ -50,4 +50,7 @@ public class Category {
         this.child.add(child);
         child.setParent(this); // 자식 카테고리 설정 시 부모 카테고리 양방향 연관관계 설정
     }
+
+    // 연관관계 메서드란?
+    // 개발자가 개발하며 연관관계 설정 누락을 실수하지 않기 위해 생성할 때 부터 연관관계를 설정해준다.
 }

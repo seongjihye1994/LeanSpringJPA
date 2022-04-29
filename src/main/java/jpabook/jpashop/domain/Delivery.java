@@ -14,7 +14,7 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY) // 지연 로딩 설정 (디폴트)
     private Order order;
 
     @Embedded

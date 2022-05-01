@@ -1,0 +1,30 @@
+spring:
+#  datasource:
+#    url: jdbc:h2:mem:test # Test 시 인메모리 H2 DB 사용 설정
+#    username: sa
+#    password: sa
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+
+# Test 환경에서는 test 패키지 하위의 resources 로 만들어준 패키지를 기준으로 애플리케이션을 설정한다.
+
+# Test 환경에서 (기본적으로 트랜잭셔널이 디폴트 롤백을 실행하긴 하지만) 실제 물리 DB에
+# 데이터를 남기고 롤백하는 과정이 번거로울 수 있다.
+# (실무에서는 테스트 서버도 여러개, 테스트 DB도 여러개일 수 있음)
+# 그래서 실제 물리 DB가 아닌 인메모리 DB를 사용해서 테스트를 해보자.
+
+# gradle 라이브러리에 H2 데이터베이스가 들어가 있다.
+# H2는 JVM 으로 메모리에 띄울 수 있다.
+
+# 더 대박적인 것은 SpringBoot 에서는 기본 DB 설정이 없으면 디폴트로 인메모리로 돌려버린당..

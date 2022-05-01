@@ -1,6 +1,7 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -8,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository // 자동으로 스프링 빈으로 등록
+@RequiredArgsConstructor // final이 붙은 멤버변수를 대상으로 자동으로 생성자를 만들어줌! (생성자로 객체를 생성함과 동시에 의존성 주입까지!)
 public class MemberRepository {
 
     /**
@@ -18,7 +20,11 @@ public class MemberRepository {
      * 트랜잭션 커밋과 try~catch로 예외를 잡아줘야 한다.
      */
     @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
+
+    /*public MemberRepository(EntityManager em) {
+        this.em = em;
+    }*/
 
     // 회원 저장
     public void save(Member member) {

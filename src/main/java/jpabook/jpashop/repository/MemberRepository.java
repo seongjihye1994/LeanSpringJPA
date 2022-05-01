@@ -22,7 +22,7 @@ public class MemberRepository {
 
     // 회원 저장
     public void save(Member member) {
-        em.persist(member); // 영속화, 트랜잭션 커밋 시 db에 insert 쿼리 날라감
+        em.persist(member); // 영속화, 트랜잭션 커밋 시 db에 insert 쿼리 날라감, pk는 Member 앤티티의 pk 값
     }
 
     // 회원 한명 조회

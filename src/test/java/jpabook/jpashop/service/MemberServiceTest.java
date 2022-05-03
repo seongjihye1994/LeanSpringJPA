@@ -3,6 +3,7 @@ package jpabook.jpashop.service;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.repository.MemberRepository;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,13 +79,4 @@ public class MemberServiceTest {
         fail("예외가 발생해야 한다.");
     }
 
-    @Test
-    public void findOne() {
-
-        // given
-
-        // when
-
-        // then
-    }
 }

@@ -61,7 +61,7 @@ public class OrderRepository {
 
         // 1. 직접 동적으로 생성한다. -> 코드 너무 복잡하고 막노동이라 그냥 네이티브 sql 쓰는게 낫겠음.
 
-        //주문 상태 검색
+        // 주문 상태 검색
         //language=JPAQL
         /*String jpql = "select o From Order o join o.member m";
         boolean isFirstCondition = true;
@@ -76,7 +76,7 @@ public class OrderRepository {
             jpql += " o.status = :status";
         }
 
-        //회원 이름 검색
+        // 회원 이름 검색
         if (StringUtils.hasText(orderSearch.getMemberName())) {
             if (isFirstCondition) {
                 jpql += " where";

@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "orders") // 테이블 이름 설정
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // protected 접근 제한자인 디폴트 생성자를 자동으로 생성해주는 롬복 -> 외부에서 new 키워드로 무분별한 객체 생성을 막음
 public class Order {
 
     @Id
@@ -23,7 +26,6 @@ public class Order {
      * 서로 엔티티 관계가 자주 함께 사용되면 즉시로딩
      * 서로 엔티티 관계가 가끔 함께 사용되면 지연로딩
      * (여기서 멤버와 주문은 가끔 사용되니 지연로딩을 설정)
-     *
      */
     @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩, 실제 연관관계를 가진 필드가 touch 될 때 쿼리를 날림 (미리 조인 x)
     @JoinColumn(name = "member_id") // 조인 할 테이블의 컬럼 지정 -> FK 설정
@@ -51,7 +53,7 @@ public class Order {
 
     /**
      * 생성자를 통해 양방향 연관관계를 모두 설정한다.
-     *
+     * <p>
      * 생성자를 사용하지 않고 양방향 연관관계를 이후 수정자로 설정하면
      * 수정자로 양방향 연관관계를 설정하지 않을 수 있는 실수가 일어날 수 있으므로,
      * 애초에 생성할 때 부터 양방향 연관관계가 설정될 수 있도록 한다.
@@ -76,6 +78,7 @@ public class Order {
 
     /**
      * 주문 생성
+     *
      * @param member
      * @param delivery
      * @param orderItems
@@ -114,12 +117,12 @@ public class Order {
     public void cancel() {
 
         // 만약 배송 상태가 이미 배송 완료라면 배송 취소 불가
-       if (delivery.getStatus() == DeliveryStatus.COMP) {
-           throw new IllegalStateException("이미 배송 완료 된 상품은 취소가 불가합니다.");
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송 완료 된 상품은 취소가 불가합니다.");
         }
 
-       // 주문 상태 '취소'로
-       this.setStatus(OrderStatus.CANCEL);
+        // 주문 상태 '취소'로
+        this.setStatus(OrderStatus.CANCEL);
 
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel(); // 각각의 주문에 주문 취소를 해야한다.
@@ -136,9 +139,6 @@ public class Order {
                 .mapToInt(OrderItem::getTotalPrice)
                 .sum();
     }
-
-
-
 
 
 }

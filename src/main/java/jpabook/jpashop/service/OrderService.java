@@ -42,7 +42,7 @@ public class OrderService {
 
         // 엔티티 조회회
         Member member = memberRepository.findOne(memberId); // 멤버 엔티티 조회
-        Item item = itemRepository.findOne(memberId); // 아이템 엔티티 조회
+        Item item = itemRepository.findOne(itemId); // 아이템 엔티티 조회
 
         // 배송 정보 생성
         Delivery delivery = new Delivery();

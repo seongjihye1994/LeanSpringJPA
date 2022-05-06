@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+
+<style>
+    .fieldError {
+        border-color: #bd2130;
+    }
+</style>
+
+<body>
+<div class="container">
+
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <form role="form" action="/members/new" th:object="${memberForm}" method="post">
+                                        <!-- form 안에서 memberForm 객체를 사용 -->
+
+        <div class="form-group">
+            <label th:for="name">이름</label>
+                            <!-- form 안에서 memberForm 객체의 멤버변수 name 사용, 기본적인 프로퍼티 접근법을 지원함, html 태그의 id와 name을 자동으로 기재해줌 ex) id=name, name=name -->
+            <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
+                   th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'"> <!-- @Valid 검증 -> BindingResult 로 잡은 에러 결과를 화면에다 노출 -->
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
+
+            <!--
+            서버 사이드에서 검증을 진행한다. (@Valid)
+            검증 시 만약 예외가 터지면 바인딩 리절트에 담는다. (@BindingResult)
+            만약 바인딩 리절트에 예외가 담겼다면 예외를 화면에 출력한다.
+            타임리프로 작성된 화면에서는 fields.hasErrors 로 예외 여부를 확인할 수 있다.
+            만약 name 이라는 필드에 에러가 있다면 form-control fieldError 커스텀 html css를 적용.
+            name 이라는 필드에 에러가 없다면 form-control 적용
+            fields.hasErrors 로 name 필드에 에러가 있다면 name 필드의 에러 메세지를 뽑아서 에러로 출력
+            -->
+
+
+
+        </div>
+
+        <div class="form-group">
+            <label th:for="city">도시</label>
+            <!-- form 안에서 memberForm 객체의 멤버변수 city 사용, 기본적인 프로퍼티 접근법을 지원함, html 태그의 id와 name을 자동으로 기재해줌 ex) id=city, name=city -->
+            <input type="text" th:field="*{city}" class="form-control"placeholder="도시를 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label th:for="street">거리</label>
+            <!-- form 안에서 memberForm 객체의 멤버변수 street 사용, 기본적인 프로퍼티 접근법을 지원함, html 태그의 id와 name을 자동으로 기재해줌 ex) id=street, name=street -->
+            <input type="text" th:field="*{street}" class="form-control" placeholder="거리를 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label th:for="zipcode">우편번호</label>
+            <!-- form 안에서 memberForm 객체의 멤버변수 zipcode 사용, 기본적인 프로퍼티 접근법을 지원함, html 태그의 id와 name을 자동으로 기재해줌 ex) id=zipcode, name=zipcode -->
+            <input type="text" th:field="*{zipcode}" class="form-control" placeholder="우편번호를 입력하세요">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+    <br/>
+
+    <div th:replace="fragments/footer :: footer" />
+
+</div> <!-- /container -->
+</body>
+</html>

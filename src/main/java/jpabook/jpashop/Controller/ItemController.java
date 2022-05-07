@@ -3,6 +3,7 @@ package jpabook.jpashop.Controller;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.item.Book;
+import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -44,16 +45,16 @@ public class ItemController {
 
     /**
      * 실무에서는 setter 를 모두 private 으로 막아놓자!!
-     *
+     * <p>
      * 정적 팩토리 메서드를 Book 클래스 내부에 생성
      * 하지만 여전히 book 객체를 만들기 위해서는 setter 불가피
-     *
+     * <p>
      * setter 를 닫으면서 정적 팩토리 메소드를 작성하기 위한 두가지 방법
      * 1. 생성자를 protected로 생성, 정적 팩토리 메소드에서 setter가 아닌 생성자로 객체를 생성하는 방법
      * 2. setter 를 private로 생성, 정적 팩토리 메소드 안에서믄 setter 를 사용하게 허가하는 방법
-     *
+     * <p>
      * 둘 중 편한거 사용하기.
-     *
+     * <p>
      * 추가로, 위의 두 방법 모두 setter 의 부재로 변경 감지 (더티 체킹) 사용하지 못하는 문제점 발생.
      * 그래서 setter 대신 비즈니스 메소드를 만들어 변경을 감지하고,
      * 정적 팩토리 메소드에서는 첫 번째 방법처럼 생성자로 객체를 생성하는 방법을 사용하자.
@@ -69,5 +70,12 @@ public class ItemController {
         book.setIsbn(form.getIsbn());
 
         return book;
+    }
+
+    @GetMapping("/items")
+    public String list(Model model) {
+        List<Item> items = itemService.findItem();
+        model.addAttribute("items", items);
+        return "items/itemList";
     }
 }

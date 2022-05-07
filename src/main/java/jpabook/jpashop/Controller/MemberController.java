@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -20,12 +22,23 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * 회원 가입 폼
+     * @param model
+     * @return
+     */
     @RequestMapping("/members/new")
     public String createForm(Model model) {
         model.addAttribute("memberForm", new MemberForm()); // 검증을 위해 빈 객체를 리턴
         return "members/createMemberForm";
     }
 
+    /**
+     * 회원 가입
+     * @param form
+     * @param result
+     * @return
+     */
     @PostMapping("/members/new")
     public String create(@Valid MemberForm form, BindingResult result) {
         // 검증을 위한 javax @Valid 사용, MemberForm 에 있는 @NotEmpty 와 같은 검증 어노테이션을 기준으로 검증해줌.
@@ -53,5 +66,20 @@ public class MemberController {
 
         memberService.join(member);
         return "redirect:/"; // PRG
+    }
+
+
+    /**
+     * 회원 전체 조회
+     * @param model
+     * @return
+     */
+    @GetMapping("/members")
+    public String list(Model model) {
+
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+
+        return "/members/memberList";
     }
 }

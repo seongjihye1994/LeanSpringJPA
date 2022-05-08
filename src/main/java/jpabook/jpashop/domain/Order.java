@@ -122,7 +122,8 @@ public class Order {
         }
 
         // 주문 상태 '취소'로
-        this.setStatus(OrderStatus.CANCEL);
+        this.setStatus(OrderStatus.CANCEL); // 더티 체킹!
+        // 객체에 수정이 일어나면, 영속성 컨텍스트도 수정이 일어나고, 트랜잭션 커밋 시점에 자동으로 DB를 변경해준다.
 
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel(); // 각각의 주문에 주문 취소를 해야한다.

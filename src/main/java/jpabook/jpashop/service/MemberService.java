@@ -29,9 +29,6 @@ public class MemberService {
 
     /**
      * 회원 가입
-     *
-     * @param member
-     * @return
      */
     @Transactional
     public Long join(Member member) {
@@ -66,4 +63,10 @@ public class MemberService {
         return memberRepository.findOne(memberId);
     }
 
+    // ************************* 변경감지(더티체킹) 메소드 **************************
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id); // 처음 준영속 상태, 현재 영속성 컨텍스트에 없음! 그래서 DB에서 조회해옴. -> 이제 영속상태
+        member.setName(name); // 이후 영속성 컨텍스트의 member 의 이름을 수정
+    }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import java.util.List;
 public class Member {
 
     @Id // 엔티티 식별자
-    @GeneratedValue
+    @GeneratedValue // db 에서 pk 값 자동 생성 위임
     @Column(name = "member_id") // PK 컬럼명 지정
     private Long id;
 
+    @NotEmpty // @Valid 가 검증함. 만약 값이 비어있다면 에러
     private String name;
 
     @Embedded // 값 타입의 임베디드 타입 사용

@@ -1,0 +1,73 @@
+package jpabook.jpashop.api;
+
+
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.service.MemberService;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+
+@RequiredArgsConstructor
+@RestController // @Controller + @ResponseBody
+public class MemberApiController {
+
+    private final MemberService memberService;
+
+
+    /**
+     * API 요청 스팩에 맞게 DTO를 별도로 생성해서 개발해야 한다.
+     * DB 물리적 설계를 위한 엔티티 객체와 폼에서 컨트롤러로 넘어오는 DTO 를 같은 객체로 취급해 사용해 버리면
+     * 여러 개발자가 개발을 같이 할 경우에는 큰 장애가 발생할 수 있다.
+     * ex) 어떤 개발자가 Member 객체의 name 필드를 username 으로 수정하면 에러가 발생한다.
+     *
+     * 실무에서 로직이 조금만 복잡해져도 엔티티 객체 하나로 모든 로직을 감당할 수 없다.
+     *
+     * 그래서 API 를 만들때는 절대로 엔티티를 파라미터로 받지 말것!
+     * 그리고 엔티티를 외부에 노출하는 행위도 옳지 않다!
+     * */
+
+    // Entity 객체를 그대로 사용했을 경우
+    @PostMapping("api/v1/members")
+    public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
+        // @RequestBody : json 으로 넘어온 데이터를 Member 객체로 자동 변환
+        // @Valid 가 넘어오는 Member 객체의 필드값을 검증함.
+        // 여기서는 name 을 넘김.
+        // 만약 name 값이 비어있다면 에러
+        Long id = memberService.join(member); // member id 반환
+
+        return new CreateMemberResponse(id);
+    }
+
+    // Entity 객체를 그대로 사용하지 않고 DTO 를 별도로 정의해서 사용했을 경우
+    @PostMapping("/api/v2/members")
+    public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
+
+        Member member = new Member();
+        member.setName(request.getName());
+
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
+    @Data
+    static class CreateMemberResponse {
+        private Long id;
+
+        public CreateMemberResponse(Long id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    static class CreateMemberRequest {
+
+        @NotEmpty
+        private String name;
+    }
+
+}

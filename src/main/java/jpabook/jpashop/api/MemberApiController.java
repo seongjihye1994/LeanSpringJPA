@@ -10,12 +10,39 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController // @Controller + @ResponseBody
 public class MemberApiController {
 
     private final MemberService memberService;
+
+
+    // 엔티티를 그대로 사용한 멤버 조회
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        return memberService.findMembers();
+    }
+
+    /**
+     * 응답을 Result 라는 객체로 하는 멤버 조회
+     * @return
+     */
+    @GetMapping("api/v2/members")
+    public Result memberV2() {
+        List<Member> findMembers = memberService.findMembers();
+
+        // memberDto로 바꿔서 리턴
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect);
+    }
+
+
 
 
     /**
@@ -77,13 +104,7 @@ public class MemberApiController {
 
 
 
-
-
-
-
-
-
-
+    // ----------------------------------------------------------------------------
 
     @Data
     static class CreateMemberResponse {
@@ -110,6 +131,25 @@ public class MemberApiController {
 
     @Data
     static class UpdateMemberRequest {
+        private String name;
+    }
+
+    // ** generic raw type
+    // json 배열 타입으로 반환하는 것은 유지보수성에 좋지 않기 때문에
+    // 제네릭으로 배열을 Object(json 타입)로 한 번 감싸서 리턴
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
+    }
+
+    /**
+     * 멤버 엔티티를 그대로 노출 x
+     * 딱 필요한 필드 몇가지만 따로 dto로 정의해서 노출해야 한다.
+     */
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
         private String name;
     }
 

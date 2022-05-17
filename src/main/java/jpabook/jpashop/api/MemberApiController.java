@@ -42,6 +42,11 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    /**
+     * 회원 등록
+     * @param request
+     * @return
+     */
     // Entity 객체를 그대로 사용하지 않고 DTO 를 별도로 정의해서 사용했을 경우
     @PostMapping("/api/v2/members")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
@@ -53,6 +58,12 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    /**
+     * 회원 이름 수정
+     * @param id
+     * @param request
+     * @return
+     */
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
 
@@ -63,6 +74,15 @@ public class MemberApiController {
 
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
+
+
+
+
+
+
+
+
+
 
 
     @Data

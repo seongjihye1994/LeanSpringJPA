@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpabook.jpashop.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,16 +22,18 @@ public class OrderItem {
     private Long id;
 
     /**
-     * 주문 내역 속의 주문 아이템은 아이템 중에서 여러개일 수 있다.
+     *  속의 주문 아이템은 아이템 중에서 여러개일 수 있다.
      */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
     private Item item; // 주문 상품
 
     /**
-     * 주문 내역 속의 주문 아이템은 주문건 속에서 여러개일 수 있다.
+     *  속의 주문 아이템은 주문건 속에서 여러개일 수 있다.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
+    @JsonIgnore // 양방향 연관관계에선 한 쪽을 무조건 JsonIgnore 해주야 한다!!! 안해주면 무한루프에 빠짐.
     private Order order; // 주문
 
     private int orderPrice; // 주문 가격

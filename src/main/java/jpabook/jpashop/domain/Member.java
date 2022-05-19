@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +32,7 @@ public class Member {
      * 한 명의 회원(1)은 여러개의 주문(N)을 주문할 수 있다.
      * 회원 엔티티 입장에서의 주문 엔티티는 OneToMany
      */
+    @JsonIgnore // 양방향 연관관계로 설정하면 한 쪽은 무조건 jsonignore 해줘야 한다!!! 안하면 무한루프에 빠짐!!!!!!!!!!!!!!!!!
     @OneToMany(mappedBy = "member") // 일대다 관계 정의(주인 x)
     private List<Order> orders = new ArrayList<>();
 

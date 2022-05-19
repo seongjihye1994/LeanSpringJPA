@@ -39,6 +39,7 @@ public class Order {
      * 하나의 주문은 하나의 배송을 가진다.
      */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
     private LocalDateTime orderDate; // 주문 시간
@@ -47,7 +48,7 @@ public class Order {
      * EnumType.STRING 옵션 사용
      * ORDINAL 사용 x
      */
-    @Enumerated // java enum 타입 매핑
+    @Enumerated(EnumType.STRING) // java enum 타입 매핑
     private OrderStatus status;
 
 

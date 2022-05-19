@@ -87,7 +87,7 @@ public class ItemService {
      * @return
      */
     // 트랜잭셔널이 클래스레벨에 readOnly로 적용되어 있어서 생략
-    public List<Item> findItem() {
+    public List<Item> findItems() {
         return itemRepository.findAll();
     }
 

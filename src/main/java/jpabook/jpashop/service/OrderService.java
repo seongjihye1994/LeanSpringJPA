@@ -62,6 +62,7 @@ public class OrderService {
 
         // 주문 저장
         orderRepository.save(order);
+
         return order.getId();
         // Order 클래스의 orderItems 와 delivery 필드는
         // cascade = CascadeType.ALL 설정이 되어있다.

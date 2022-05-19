@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class Delivery {
     private Long id;
 
     @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY) // 지연 로딩 설정 (디폴트)
+    @JsonIgnore // 양방향 연관관계에서는 한 쪽을 jsonIgnore 해줘야 한다!!!! 안하면 무한루프에 빠짐.
     private Order order;
 
     @Embedded // 임베디드 타입, DB에 테이블 생성 x

@@ -44,17 +44,60 @@ public class OrderRepository {
         return em.find(Order.class, id); // 영속성 컨텍스트 1차 캐시에서 조회
     }
 
+
+    public List<Order> findAll(OrderSearch orderSearch) {
+        // language=JPAQL
+        String jpql = "select o From Order o join o.member m";
+        boolean isFirstCondition = true;
+
+        // 주문 상태 검색
+        if (orderSearch.getOrderStatus() != null) {
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " o.status = :status";
+        }
+
+        //회원 이름 검색
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " m.name like :name";
+        }
+
+        TypedQuery<Order> query = em.createQuery(jpql, Order.class)
+                .setMaxResults(1000); //최대 1000건
+
+        if (orderSearch.getOrderStatus() != null) {
+            query = query.setParameter("status", orderSearch.getOrderStatus());
+        }
+
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            query = query.setParameter("name", orderSearch.getMemberName());
+        }
+
+        return query.getResultList();
+    }
+
+
     /**
      * 주문건 검색 기능
      */
-    public List<Order> findAll(OrderSearch orderSearch) {
-        return em.createQuery("select o from Order o join o.member m" +
-                        " where  o.status = :status " + // 파라미터 바인딩 시 : 필수
-                        " and m.name like :name", Order.class)
-                .setParameter("status", orderSearch.getOrderStatus()) // 조건 파라미터 -> 주문 상태
-                .setParameter("name", orderSearch.getMemberName()) // 조건 파라미터 -> 회원명
-                .setMaxResults(1000) // 최대 1000건 까지 조회
-                .getResultList();
+//    public List<Order> findAll(OrderSearch orderSearch) {
+//        return em.createQuery("select o from Order o join o.member m" +
+//                        " where o.status = :status " + // 파라미터 바인딩 시 : 필수
+//                        " and m.name like :name", Order.class)
+//                .setParameter("status", orderSearch.getOrderStatus()) // 조건 파라미터 -> 주문 상태
+//                .setParameter("name", orderSearch.getMemberName()) // 조건 파라미터 -> 회원명
+//                .setMaxResults(1000) // 최대 1000건 까지 조회
+//                .getResultList();
 
         // 그런데 동적 쿼리는 어떻게 적용하지?
         // 검색 조건이 있을 때만 쿼리를 실행하고 싶다.
@@ -103,7 +146,7 @@ public class OrderRepository {
         */
 
         // 2. JPA Criteria로 처리한다. (아래 코드)
-    }
+    //}
 
     /**
      * JPA Criteria

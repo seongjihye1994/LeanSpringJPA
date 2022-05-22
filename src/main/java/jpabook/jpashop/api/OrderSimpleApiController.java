@@ -1,13 +1,18 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * xToOne (~ToOne 관계 : ManyToOne, OneToOne 관계에서의 성능 최적화)
@@ -98,4 +103,36 @@ public class OrderSimpleApiController {
 
         return all;
     }
+
+    @GetMapping("api/v2/simple-orders")
+    public List<SimpleOrderDto> orderV2() {
+        // ORDER 2개
+        // N + 1 -> 1 + 회원 + 배송 N
+        List<Order> orders = orderRepository.findAll(new OrderSearch());
+
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o)) // order 를 SimpleOrderDto로 변환
+                .collect(Collectors.toList()); // SimpleOrderDto로 변환한 것을 collect 사용해서 list로 변환
+
+        return result;
+    }
+
+    @Data
+    static class SimpleOrderDto {
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+
+        // 생성자에서 바로 데이터 세팅
+        public SimpleOrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName(); // 위에서 orders.stream 할 떄 LAZY 초기화 일어남
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress(); // 위에서 orders.stream 할 떄 LAZY 초기화 일어남
+        }
+    }
+
 }

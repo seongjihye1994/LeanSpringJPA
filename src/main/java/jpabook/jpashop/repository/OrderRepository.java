@@ -86,6 +86,23 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * fetch join 을 사용해서 Order를 조회할 때 Member와 Delivery도 그래프탐색으로 쿼리 한방에 조회하기.
+     * -> 즉시로딩, 지연로딩의 N+1 이슈 해결
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" + // Order 를 조회할 때
+                        " join fetch o.member m" + // member 와
+                        " join fetch o.delivery d", Order.class // delivery 도 그래프탐색으로 한 번에 조회
+        ).getResultList();
+
+        // Order 조회 시 member와 delivery 조인해서 한 방에 가져옴
+        // 현재 Order 엔티티를 보면, member 필드와 delivery 필드가 지연로딩으로 설정되어 있다.
+        // 하지만 fetch join을 사용하면 지연로딩 모두 무시하고 쿼리 한방에 조회해서 한 번에 가져온다.
+    }
+
 
     /**
      * 주문건 검색 기능

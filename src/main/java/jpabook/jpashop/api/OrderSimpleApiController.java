@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,8 +105,16 @@ public class OrderSimpleApiController {
         return all;
     }
 
+    /**
+     * 엔티티를 그대로 노출하지 않고 Dto를 별도로 만들어서 반환
+     *
+     * 하지만 여전히 N+1 쿼리 문제가 발생한다.
+     * -> v3 에서 fetch join 을 사용해서 성능 이슈를 수정해보자.
+     * @return
+     */
     @GetMapping("api/v2/simple-orders")
     public List<SimpleOrderDto> orderV2() {
+
         // ORDER 2개
         // N + 1 -> 1 + 회원 + 배송 N
         List<Order> orders = orderRepository.findAll(new OrderSearch());
@@ -115,7 +124,64 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList()); // SimpleOrderDto로 변환한 것을 collect 사용해서 list로 변환
 
         return result;
+
     }
+
+    /**
+     * 엔티티를 그대로 노출하지 않고 Dto를 별도로 만들어서 반환
+     *
+     * -> v2에서 발생한 지연로딩 N+1 쿼리 발생 성능 이슈를 fetch join 으로 수정
+     *
+     * ** 패치 조인을 사용해야 JPA 쿼리 성능을 높일 수 있다. **
+     * @return
+     */
+    @GetMapping("api/v3/simple-orders")
+    public List<SimpleOrderDto> orderV3() {
+
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(); // fetch join을 사용해 Order와 member, delivery 쿼리 한 방에 가져오기
+
+        return orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+
+        /*
+        ** 쿼리 결과!! **
+
+        select
+        order0_.order_id as order_id1_6_0_,
+                member1_.member_id as member_i1_4_1_,
+        delivery2_.delivery_id as delivery1_2_2_,
+                order0_.delivery_id as delivery4_6_0_,
+        order0_.member_id as member_i5_6_0_,
+                order0_.order_date as order_da2_6_0_,
+        order0_.status as status3_6_0_,
+                member1_.city as city2_4_1_,
+        member1_.street as street3_4_1_,
+                member1_.zipcode as zipcode4_4_1_,
+        member1_.name as name5_4_1_,
+                delivery2_.city as city2_2_2_,
+        delivery2_.street as street3_2_2_,
+                delivery2_.zipcode as zipcode4_2_2_,
+        delivery2_.status as status5_2_2_
+                from
+        orders order0_
+        inner join
+        member member1_
+        on order0_.member_id=member1_.member_id
+        inner join
+        delivery delivery2_
+        on order0_.delivery_id=delivery2_.delivery_id
+
+        쿼리 딱 한 방 나갔다!!
+
+        v2 버전은 쿼리가 5방이 나감..
+
+        */
+
+    }
+
+
 
     @Data
     static class SimpleOrderDto {

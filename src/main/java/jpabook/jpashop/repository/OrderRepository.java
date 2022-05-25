@@ -1,8 +1,6 @@
 package jpabook.jpashop.repository;
 
-import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.item.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -10,8 +8,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -116,13 +112,13 @@ public class OrderRepository {
 //                .setMaxResults(1000) // 최대 1000건 까지 조회
 //                .getResultList();
 
-        // 그런데 동적 쿼리는 어떻게 적용하지?
-        // 검색 조건이 있을 때만 쿼리를 실행하고 싶다.
+    // 그런데 동적 쿼리는 어떻게 적용하지?
+    // 검색 조건이 있을 때만 쿼리를 실행하고 싶다.
 
-        // 1. 직접 동적으로 생성한다. -> 코드 너무 복잡하고 막노동이라 그냥 네이티브 sql 쓰는게 낫겠음.
+    // 1. 직접 동적으로 생성한다. -> 코드 너무 복잡하고 막노동이라 그냥 네이티브 sql 쓰는게 낫겠음.
 
-        // 주문 상태 검색
-        //language=JPAQL
+    // 주문 상태 검색
+    //language=JPAQL
         /*String jpql = "select o From Order o join o.member m";
         boolean isFirstCondition = true;
 
@@ -162,7 +158,7 @@ public class OrderRepository {
 
         */
 
-        // 2. JPA Criteria로 처리한다. (아래 코드)
+    // 2. JPA Criteria로 처리한다. (아래 코드)
     //}
 
     /**

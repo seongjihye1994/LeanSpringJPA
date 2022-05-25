@@ -5,13 +5,14 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     // 테스트를 위해 Order 엔티티 그대로 api에서 받음 -> 실무에서는 절대 이렇게 하지 말기!!!!!
     @GetMapping("/api/v1/simple-orders")
@@ -181,7 +183,63 @@ public class OrderSimpleApiController {
 
     }
 
+    /**
+     * 이번에는 엔티티를 바로 조회하지 않고, dto로 조회해보자.
+     *
+     * v3는 List<Order> orders = orderRepository.find....
+     * 처럼 제네릭에 Order 타입을 바로 대입해서 조회했다.
+     *
+     * v4는 dto로 조회해보자.
+     *
+     * - 쿼리 1번 호출
+     * - select 절에서 원하는 데이터만 선택해서 조회
+     * @return
+     */
+    @GetMapping("api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> orderV4() {
+        // jpa에서 바로 OrderSimpleQueryDto로 꺼내기
 
+        return orderSimpleQueryRepository.findOrderDtos();
+    }
+
+/*
+    select
+    order0_.order_id as col_0_0_,
+    member1_.name as col_1_0_,
+    order0_.order_date as col_2_0_,
+    order0_.status as col_3_0_,
+    delivery2_.city as col_4_0_,
+    delivery2_.street as col_4_1_,
+    delivery2_.zipcode as col_4_2_
+            from
+    orders order0_
+    inner join
+    member member1_
+    on order0_.member_id=member1_.member_id
+    inner join
+    delivery delivery2_
+    on order0_.delivery_id=delivery2_.delivery_id
+
+    v3의 fetch join 과 v4의 차이는?
+
+    페치조인은 select 절을 거르지 않아 사용하지 않는 필드 모두 가져오지만,
+    v4는 사용하는 select 절만 가져오기 때문에 약간의 성능 차이가 발생한다.
+
+    그럼 v4가 더 좋은거 아닌가요?
+    v3로 가져온 페치조인 결과는 다른 api에서도 사용 가능하다.
+    원하는 dto로 바꿔서 원하는 필드만 사용하도록 커스텀할 수 있다.
+
+    하지만, v4 는 OrderSimpleQueryDto 에만 핏된 필드만 조회했기 때문에
+    OrderSimpleQueryDto를 사용하지 않는 다른 api에서는 재사용이 불가능하다.
+
+    또한, 코드를 비교해보면 알겠지만, 쿼리문을 작성하는 부분이 v4가 조금 더 더럽다..
+
+    재사용은 v3가, 성능상으로는 v4가 좋은데.. 뭘 선택하면 좋을까?
+
+    딱 select 절을 거를 수 있다는 쿼리 성능 차이가 조금 있을 뿐, v4가 더 좋다고 할 수는 없을 것이다.
+    -> 사실 요즘 네트워크 성능이 너무 좋아서... 별 차이가 안난다.......
+
+*/
 
     @Data
     static class SimpleOrderDto {
@@ -200,5 +258,7 @@ public class OrderSimpleApiController {
             address = order.getDelivery().getAddress(); // 위에서 orders.stream 할 떄 LAZY 초기화 일어남
         }
     }
+
+
 
 }

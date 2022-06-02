@@ -75,6 +75,27 @@ public class OrderApiController {
 
     }
 
+    /**
+     * 컬렉션 패치 조인 성능 최적화
+     *
+     * v2 는 dto 내부의 entity도 dto로 바꿔주었지만
+     * 지연로딩으로 인한 N+1 문제가 난다.
+     *
+     * 컬렉션 페치 조인은 어떻게 사용하는지 알아보자.
+     * @return
+     */
+    @GetMapping("api/v3/orders")
+    public List<OrderDto> orderV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+
+    }
+
     @Data
     static class OrderDto {
 

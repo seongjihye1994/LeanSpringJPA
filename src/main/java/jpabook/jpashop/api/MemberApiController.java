@@ -28,7 +28,6 @@ public class MemberApiController {
 
     /**
      * 응답을 Result 라는 객체로 하는 멤버 조회
-     * @return
      */
     @GetMapping("api/v2/members")
     public Result memberV2() {
@@ -41,9 +40,6 @@ public class MemberApiController {
 
         return new Result(collect);
     }
-
-
-
 
     /**
      * API 요청 스팩에 맞게 DTO를 별도로 생성해서 개발해야 한다.

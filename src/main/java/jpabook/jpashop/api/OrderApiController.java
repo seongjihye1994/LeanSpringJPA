@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -87,6 +88,26 @@ public class OrderApiController {
     @GetMapping("api/v3/orders")
     public List<OrderDto> orderV3() {
         List<Order> orders = orderRepository.findAllWithItem();
+
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+
+    }
+
+    /**
+     * 컬렉션 패치 조인 + 페이징
+     * @return
+     */
+    @GetMapping("api/v3.1/orders")
+    public List<OrderDto> orderV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                       @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        // Order와 Member, Delivery 패치조인
+        // ~ToOne 관계는 패치조인으로 한 번에 조회해 오기. -> 페이징에 영향을 주지 않는다.
+        // (Order - Member, Order - Delivery 는 ~ToOne 관계)
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
 
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))

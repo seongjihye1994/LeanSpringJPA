@@ -11,6 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 100 # 컬렉션 페치 조인 + 페이징 처리 옵션
 
 logging:
   level:

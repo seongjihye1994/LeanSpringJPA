@@ -18,7 +18,7 @@ public class OrderRepository {
     /**
      * 이 어노테이션이 있으면 JPA의 엔티티 매니저가 스프링이 생성한 엔티티 매니저를 자동으로 의존 주입해준다.
      * 스프링이 엔티티 매니저를 만들어서 주입해준다.
-     *
+     * <p>
      * 만약 스프링을 사용하지 않으면, 앤티티매니저팩토리와 앤티티매니저를 모두 수동으로 생성하고,
      * 트랜잭션 커밋과 try~catch로 예외를 잡아줘야 한다.
      */
@@ -27,6 +27,7 @@ public class OrderRepository {
 
     /**
      * 주문 상품 저장
+     *
      * @param order
      */
     public void save(Order order) {
@@ -85,6 +86,7 @@ public class OrderRepository {
     /**
      * fetch join 을 사용해서 Order를 조회할 때 Member와 Delivery도 그래프탐색으로 쿼리 한방에 조회하기.
      * -> 즉시로딩, 지연로딩의 N+1 이슈 해결
+     *
      * @return
      */
     public List<Order> findAllWithMemberDelivery() {
@@ -97,6 +99,22 @@ public class OrderRepository {
         // Order 조회 시 member와 delivery 조인해서 한 방에 가져옴
         // 현재 Order 엔티티를 보면, member 필드와 delivery 필드가 지연로딩으로 설정되어 있다.
         // 하지만 fetch join을 사용하면 지연로딩 모두 무시하고 쿼리 한방에 조회해서 한 번에 가져온다.
+    }
+
+    /**
+     * 컬렉션 패치 조인 + 페이징
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" + // Order 를 조회할 때
+                                " join fetch o.member m" + // member 와
+                                " join fetch o.delivery d", Order.class // delivery 도 그래프탐색으로 한 번에 조회
+                ).setFirstResult(offset) // 페이징 처리
+                .setMaxResults(limit)
+                .getResultList();
     }
 
     public List<Order> findAllWithItem() {
@@ -190,11 +208,19 @@ public class OrderRepository {
 
 
     }
+
 }
 
 
 /**
  * 주문건 검색 기능
+ * <p>
+ * JPA Criteria
+ * <p>
+ * 딱봐도 안 쓸것같이 생김.
+ *
+ * @param orderSearch
+ * @return
  */
 //    public List<Order> findAll(OrderSearch orderSearch) {
 //        return em.createQuery("select o from Order o join o.member m" +

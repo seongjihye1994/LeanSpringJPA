@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        default_batch_fetch_size: 100 # 컬렉션 페치 조인 + 페이징 처리 옵션
+        default_batch_fetch_size: 100 # 컬렉션 페치 조인 + ~ToOne 페이징 처리 옵션 - 설정한 정수만큼 in 쿼리로 가져온다.
 
 logging:
   level:
